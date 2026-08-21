@@ -1,0 +1,8 @@
+# Common suffixes appended to filenames
+~
+.bak
+.backup
+.old
+.orig
+.tmp
+.swp

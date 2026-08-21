@@ -1,0 +1,7 @@
+# Common backup file extensions
+bak
+backup
+old
+orig
+tmp
+swp

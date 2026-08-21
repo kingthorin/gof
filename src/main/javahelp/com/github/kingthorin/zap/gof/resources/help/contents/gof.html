@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Good Old Files</TITLE>
+</HEAD>
+<BODY>
+	<H1>Good Old Files</H1>
+	<P>An active scan rule that probes for backup, editor-swap,
+		old-version, and copy variants of files discovered during scanning.</P>
+
+	<H2>Overview</H2>
+	<P>
+		The Good Old Files (GOF) rule attempts to find exposed backup copies,
+		old versions, and editor temporary files by probing for common
+		filename variants at discovered paths. For example, if ZAP discovers
+		<CODE>index.php</CODE>
+		, GOF will probe for variants like:
+	</P>
+	<UL>
+		<LI><CODE>index.php.bak</CODE>, <CODE>index.php.backup</CODE>
+			(extension append)</LI>
+		<LI><CODE>index.backup.php</CODE>, <CODE>index.old.php</CODE>
+			(filename suffix)</LI>
+		<LI><CODE>.index.php</CODE>, <CODE>_index.php</CODE> (filename
+			prefix)</LI>
+		<LI>Directory variants like <CODE>/admin_old/</CODE>, <CODE>/backup/</CODE></LI>
+	</UL>
+
+	<H2>How It Works</H2>
+	<P>The rule:</P>
+	<OL>
+		<LI>Runs as an optional active scan rule (disabled by default)</LI>
+		<LI>Processes each discovered file/directory node in the site
+			tree</LI>
+		<LI>Generates candidate filenames using configurable permutation
+			strategies</LI>
+		<LI>Probes each candidate and records those that exist</LI>
+		<LI>Uses ZAP's soft-404 detection (Custom Pages + Analyser) to
+			avoid false positives</LI>
+	</OL>
+
+	<H2>Enabling GOF</H2>
+	<P>GOF ships disabled by default. Enable it via:</P>
+	<UL>
+		<LI><STRONG>Context Menu:</STRONG> Right-click a site node,
+			select "Attack" → "Attack with Good Old Files"</LI>
+		<LI><STRONG>Policy Manager:</STRONG> Edit a scan policy, set GOF
+			threshold to Medium or higher</LI>
+		<LI><STRONG>API/Automation Framework:</STRONG> Use standard
+			active scan endpoints with GOF rule ID</LI>
+	</UL>
+
+	<H2>Configuration</H2>
+	<P>
+		Configure GOF under <STRONG>Tools → Options → Good Old Files</STRONG>:
+	</P>
+	<UL>
+		<LI>Disable/enable individual permutation strategies</LI>
+		<LI>Add custom filename patterns to default wordlists</LI>
+		<LI>Control case-insensitive matching</LI>
+	</UL>
+
+	<H2>Alert Levels</H2>
+	<UL>
+		<LI><STRONG>Medium/Medium:</STRONG> Backup file found (200
+			response + confirmed not 404)</LI>
+		<LI><STRONG>Low/Low (threshold=LOW):</STRONG> Variant exists but
+			access restricted (401/403)</LI>
+	</UL>
+
+	<H2>More Information</H2>
+	<P>
+		See <A href="https://www.zaproxy.org/docs/desktop/addons/gof/">ZAP
+			documentation</A> for additional details.
+	</P>
+
+</BODY>
+</HTML>

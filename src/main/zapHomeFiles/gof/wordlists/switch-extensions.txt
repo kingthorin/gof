@@ -1,0 +1,10 @@
+# Alternative file extensions for the same resource
+php
+php3
+asp
+aspx
+jsp
+jspx
+py
+rb
+pl

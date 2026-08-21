@@ -1,0 +1,4 @@
+# Common prefixes prepended to directory names
+.
+_
+~

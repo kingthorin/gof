@@ -1,0 +1,7 @@
+# Common suffixes appended to directory names
+bak
+backup
+old
+orig
+_old
+_backup
