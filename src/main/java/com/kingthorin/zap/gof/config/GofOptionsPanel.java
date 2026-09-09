@@ -33,8 +33,10 @@ public class GofOptionsPanel extends AbstractParamPanel {
     private JCheckBox extensionAppendCheckbox;
     private JCheckBox extensionReplaceCheckbox;
     private JCheckBox extensionSwitchCheckbox;
+    private JCheckBox extensionCombinationCheckbox;
     private JCheckBox filenameSuffixCheckbox;
     private JCheckBox filenamePrefixCheckbox;
+    private JCheckBox digitEnumerationCheckbox;
     private JCheckBox directorySuffixCheckbox;
     private JCheckBox directoryPrefixCheckbox;
     private JTextArea customBackupExtensionsArea;
@@ -73,12 +75,22 @@ public class GofOptionsPanel extends AbstractParamPanel {
         this.add(extensionSwitchCheckbox, gbc);
         gbc.gridy++;
 
+        extensionCombinationCheckbox =
+                new JCheckBox("Extension Combination (file.php → file.php_old.php)");
+        this.add(extensionCombinationCheckbox, gbc);
+        gbc.gridy++;
+
         filenameSuffixCheckbox = new JCheckBox("Filename Suffix (file.php → file.old.php)");
         this.add(filenameSuffixCheckbox, gbc);
         gbc.gridy++;
 
         filenamePrefixCheckbox = new JCheckBox("Filename Prefix (file.php → .file.php)");
         this.add(filenamePrefixCheckbox, gbc);
+        gbc.gridy++;
+
+        digitEnumerationCheckbox =
+                new JCheckBox("Digit Enumeration (file1.php → file2.php, file3.php, ...)");
+        this.add(digitEnumerationCheckbox, gbc);
         gbc.gridy++;
 
         directorySuffixCheckbox = new JCheckBox("Directory Suffix (/admin/ → /admin_old/)");
@@ -129,8 +141,10 @@ public class GofOptionsPanel extends AbstractParamPanel {
         extensionAppendCheckbox.setSelected(param.isExtensionAppendEnabled());
         extensionReplaceCheckbox.setSelected(param.isExtensionReplaceEnabled());
         extensionSwitchCheckbox.setSelected(param.isExtensionSwitchEnabled());
+        extensionCombinationCheckbox.setSelected(param.isExtensionCombinationEnabled());
         filenameSuffixCheckbox.setSelected(param.isFilenameSuffixEnabled());
         filenamePrefixCheckbox.setSelected(param.isFilenamePrefixEnabled());
+        digitEnumerationCheckbox.setSelected(param.isDigitEnumerationEnabled());
         directorySuffixCheckbox.setSelected(param.isDirectorySuffixEnabled());
         directoryPrefixCheckbox.setSelected(param.isDirectoryPrefixEnabled());
         customBackupExtensionsArea.setText(String.join("\n", param.getCustomBackupExtensions()));
@@ -145,8 +159,10 @@ public class GofOptionsPanel extends AbstractParamPanel {
         param.setExtensionAppendEnabled(extensionAppendCheckbox.isSelected());
         param.setExtensionReplaceEnabled(extensionReplaceCheckbox.isSelected());
         param.setExtensionSwitchEnabled(extensionSwitchCheckbox.isSelected());
+        param.setExtensionCombinationEnabled(extensionCombinationCheckbox.isSelected());
         param.setFilenameSuffixEnabled(filenameSuffixCheckbox.isSelected());
         param.setFilenamePrefixEnabled(filenamePrefixCheckbox.isSelected());
+        param.setDigitEnumerationEnabled(digitEnumerationCheckbox.isSelected());
         param.setDirectorySuffixEnabled(directorySuffixCheckbox.isSelected());
         param.setDirectoryPrefixEnabled(directoryPrefixCheckbox.isSelected());
         param.setCustomBackupExtensions(parseTextArea(customBackupExtensionsArea));

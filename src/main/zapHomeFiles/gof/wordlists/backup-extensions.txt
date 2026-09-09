@@ -1,7 +1,22 @@
 # Common backup file extensions
+old
+conf
+1
+2
+12
+123
+txt
+bac
 bak
 backup
-old
-orig
-tmp
-swp
+asd
+dsa
+a
+aa
+aaa
+tar.gz
+tar
+7z
+zip
+inc
+~

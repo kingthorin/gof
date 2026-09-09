@@ -22,12 +22,14 @@ import org.parosproxy.paros.common.AbstractParam;
 
 public class GofParam extends AbstractParam {
 
-    private List<String> backupExtensions = List.of("bak", "backup", "old", "orig", "tmp", "swp");
+    private List<String> backupExtensions =
+            List.of(
+                    "old", "conf", "1", "2", "12", "123", "txt", "bac", "bak", "backup", "asd",
+                    "dsa", "a", "aa", "aaa", "tar.gz", "tar", "7z", "zip", "inc", "~");
     private List<String> switchExtensions =
             List.of("php", "php3", "asp", "aspx", "jsp", "jspx", "py", "rb", "pl");
-    private List<String> filenameSuffixes =
-            List.of("~", ".bak", ".backup", ".old", ".orig", ".tmp", ".swp");
-    private List<String> filenamePrefixes = List.of(".", "_", "~");
+    private List<String> filenameSuffixes = List.of(" - Copy", "_old");
+    private List<String> filenamePrefixes = List.of("Copy of", "old_", "Old_");
     private List<String> directorySuffixes =
             List.of("bak", "backup", "old", "orig", "_old", "_backup");
     private List<String> directoryPrefixes = List.of(".", "_", "~");
@@ -37,8 +39,10 @@ public class GofParam extends AbstractParam {
     private boolean extensionAppendEnabled = true;
     private boolean extensionReplaceEnabled = true;
     private boolean extensionSwitchEnabled = true;
+    private boolean extensionCombinationEnabled = true;
     private boolean filenameSuffixEnabled = true;
     private boolean filenamePrefixEnabled = true;
+    private boolean digitEnumerationEnabled = true;
     private boolean directorySuffixEnabled = true;
     private boolean directoryPrefixEnabled = true;
 
@@ -143,6 +147,14 @@ public class GofParam extends AbstractParam {
         this.extensionSwitchEnabled = enabled;
     }
 
+    public boolean isExtensionCombinationEnabled() {
+        return extensionCombinationEnabled;
+    }
+
+    public void setExtensionCombinationEnabled(boolean enabled) {
+        this.extensionCombinationEnabled = enabled;
+    }
+
     public boolean isFilenameSuffixEnabled() {
         return filenameSuffixEnabled;
     }
@@ -157,6 +169,14 @@ public class GofParam extends AbstractParam {
 
     public void setFilenamePrefixEnabled(boolean enabled) {
         this.filenamePrefixEnabled = enabled;
+    }
+
+    public boolean isDigitEnumerationEnabled() {
+        return digitEnumerationEnabled;
+    }
+
+    public void setDigitEnumerationEnabled(boolean enabled) {
+        this.digitEnumerationEnabled = enabled;
     }
 
     public boolean isDirectorySuffixEnabled() {

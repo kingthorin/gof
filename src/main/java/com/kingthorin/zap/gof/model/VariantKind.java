@@ -23,8 +23,10 @@ public enum VariantKind {
     EXTENSION_APPEND("gof.variant.extension.append"),
     EXTENSION_REPLACE("gof.variant.extension.replace"),
     EXTENSION_SWITCH("gof.variant.extension.switch"),
+    EXTENSION_COMBINATION("gof.variant.extension.combination"),
     FILENAME_SUFFIX("gof.variant.filename.suffix"),
     FILENAME_PREFIX("gof.variant.filename.prefix"),
+    DIGIT_ENUMERATION("gof.variant.digit.enumeration"),
     DIRECTORY_SUFFIX("gof.variant.directory.suffix"),
     DIRECTORY_PREFIX("gof.variant.directory.prefix");
 

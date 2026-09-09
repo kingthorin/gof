@@ -46,11 +46,17 @@ public class CandidateGenerator {
         if (config.isExtensionSwitchEnabled()) {
             strategies.add(new ExtensionSwitchStrategy());
         }
+        if (config.isExtensionCombinationEnabled()) {
+            strategies.add(new ExtensionCombinationStrategy());
+        }
         if (config.isFilenameSuffixEnabled()) {
             strategies.add(new FilenameSuffixStrategy());
         }
         if (config.isFilenamePrefixEnabled()) {
             strategies.add(new FilenamePrefixStrategy());
+        }
+        if (config.isDigitEnumerationEnabled()) {
+            strategies.add(new DigitEnumerationStrategy());
         }
         if (config.isDirectorySuffixEnabled()) {
             strategies.add(new DirectorySuffixStrategy());

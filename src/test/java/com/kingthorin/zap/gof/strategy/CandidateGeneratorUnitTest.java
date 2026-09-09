@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.kingthorin.zap.gof.config.GofParam;
 import com.kingthorin.zap.gof.model.FileNameCandidate;
+import com.kingthorin.zap.gof.model.VariantKind;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -96,5 +97,67 @@ class CandidateGeneratorUnitTest {
                 generator.generate(uri, config, Plugin.AttackStrength.MEDIUM);
 
         assertThat(candidates).hasSize(6);
+    }
+
+    @Test
+    void testExtensionCombinationStrategyIncluded() throws Exception {
+        CandidateGenerator generator = new CandidateGenerator();
+        GofParam config = new GofParam();
+        config.setExtensionCombinationEnabled(true);
+        URI uri = new URI("https://example.com/login.php");
+
+        List<FileNameCandidate> candidates =
+                generator.generate(uri, config, Plugin.AttackStrength.HIGH);
+
+        assertThat(candidates)
+                .anyMatch(
+                        c ->
+                                c.uri().toString().contains("login_old.php")
+                                        || c.uri().toString().contains("login.old.php"));
+    }
+
+    @Test
+    void testDigitEnumerationStrategyIncluded() throws Exception {
+        CandidateGenerator generator = new CandidateGenerator();
+        GofParam config = new GofParam();
+        config.setDigitEnumerationEnabled(true);
+        URI uri = new URI("https://example.com/file1.php");
+
+        List<FileNameCandidate> candidates =
+                generator.generate(uri, config, Plugin.AttackStrength.HIGH);
+
+        assertThat(candidates)
+                .anySatisfy(c -> assertThat(c.uri().toString()).contains("file0.php"));
+    }
+
+    @Test
+    void testExtensionCombinationDisabled() throws Exception {
+        CandidateGenerator generator = new CandidateGenerator();
+        GofParam config = new GofParam();
+        config.setExtensionCombinationEnabled(false);
+        URI uri = new URI("https://example.com/login.php");
+
+        List<FileNameCandidate> candidates =
+                generator.generate(uri, config, Plugin.AttackStrength.HIGH);
+
+        assertThat(candidates)
+                .noneMatch(
+                        c ->
+                                c.uri().toString().contains("login_old.php")
+                                        && c.kind().equals(VariantKind.EXTENSION_COMBINATION));
+    }
+
+    @Test
+    void testDigitEnumerationDisabled() throws Exception {
+        CandidateGenerator generator = new CandidateGenerator();
+        GofParam config = new GofParam();
+        config.setDigitEnumerationEnabled(false);
+        URI uri = new URI("https://example.com/file1.php");
+
+        List<FileNameCandidate> candidates =
+                generator.generate(uri, config, Plugin.AttackStrength.HIGH);
+
+        assertThat(candidates)
+                .noneSatisfy(c -> assertThat(c.uri().toString()).contains("file0.php"));
     }
 }

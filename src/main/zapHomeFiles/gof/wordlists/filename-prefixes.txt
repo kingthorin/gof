@@ -1,4 +1,4 @@
-# Common prefixes prepended to filenames
-.
-_
-~
+# Common filename prefixes for old/backup files
+Copy of
+old_
+Old_
