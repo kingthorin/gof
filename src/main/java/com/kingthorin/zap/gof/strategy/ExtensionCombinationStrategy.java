@@ -24,7 +24,6 @@ import com.kingthorin.zap.gof.model.VariantKind;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 
 public class ExtensionCombinationStrategy implements VariantStrategy {
 
@@ -54,19 +53,9 @@ public class ExtensionCombinationStrategy implements VariantStrategy {
             };
 
             for (String candidateFilename : combinations) {
-                try {
-                    URI candidateUri =
-                            new URI(
-                                    parts.scheme(),
-                                    null,
-                                    parts.host(),
-                                    parts.port(),
-                                    parts.directoryPath() + candidateFilename,
-                                    null,
-                                    null);
+                URI candidateUri = parts.toUri(parts.directoryPath() + candidateFilename);
+                if (candidateUri != null) {
                     candidates.add(new FileNameCandidate(candidateUri, kind(), candidateFilename));
-                } catch (URIException e) {
-                    // Skip malformed URIs
                 }
             }
         }

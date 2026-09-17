@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -40,7 +42,7 @@ import org.zaproxy.addon.commonlib.PolicyTag;
 
 public class GofActiveScanRule extends AbstractAppPlugin {
 
-    private static final int PLUGIN_ID = 60300;
+    public static final int PLUGIN_ID = 60300;
     private static final String PREFIX = "gof.ascan.gof";
     private static final Logger LOGGER = LogManager.getLogger(GofActiveScanRule.class);
     private static final Map<String, String> ALERT_TAGS;
@@ -55,6 +57,15 @@ public class GofActiveScanRule extends AbstractAppPlugin {
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
+    /**
+     * Whether {@code uri} is already a known site node (e.g. spidered/proxied before this scan
+     * ran). Such URIs are real, unrelated resources that happen to match a permutation - not a
+     * backup file discovery - and should not be probed/alerted on.
+     */
+    static boolean isKnownNode(SiteMap siteTree, URI uri) {
+        return siteTree.findNode(uri) != null;
     }
 
     @Override
@@ -134,6 +145,13 @@ public class GofActiveScanRule extends AbstractAppPlugin {
                     continue;
                 }
                 getKb().add(PREFIX + ".probed." + uriString, Boolean.TRUE);
+
+                if (isKnownNode(Model.getSingleton().getSession().getSiteTree(), candidate.uri())) {
+                    // Already a known page (spidered/proxied before this scan) - not a backup
+                    // file discovery, just an unrelated real resource that happens to match a
+                    // permutation.
+                    continue;
+                }
 
                 HttpMessage testMsg = getNewMsg();
                 testMsg.getRequestHeader().setURI(candidate.uri());

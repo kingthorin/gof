@@ -44,19 +44,9 @@ public class DirectorySuffixStrategy implements VariantStrategy {
                 parentPath = parentPath.substring(0, parentPath.length() - 1);
             }
             String newPath = parentPath + suffix + "/";
-            try {
-                URI candidateUri =
-                        new URI(
-                                parts.scheme(),
-                                null,
-                                parts.host(),
-                                parts.port(),
-                                newPath,
-                                null,
-                                null);
+            URI candidateUri = parts.toUri(newPath);
+            if (candidateUri != null) {
                 candidates.add(new FileNameCandidate(candidateUri, kind(), suffix));
-            } catch (Exception e) {
-                // Skip malformed URIs
             }
         }
 

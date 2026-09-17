@@ -81,65 +81,28 @@ public class GofParam extends VersionedAbstractParam {
 
     public GofParam() {}
 
+    private List<String> loadList(String key, List<String> current) {
+        List<?> values = getConfig().getList(key);
+        if (values == null || values.isEmpty()) {
+            return current;
+        }
+        return new ArrayList<>(values.stream().map(Object::toString).toList());
+    }
+
     @Override
     protected void parseImpl() {
-        List<?> backupExtList = getConfig().getList(BACKUP_EXTENSIONS_KEY);
-        if (backupExtList != null && !backupExtList.isEmpty()) {
-            backupExtensions =
-                    new ArrayList<>(backupExtList.stream().map(Object::toString).toList());
-        }
-
-        List<?> switchExtList = getConfig().getList(SWITCH_EXTENSIONS_KEY);
-        if (switchExtList != null && !switchExtList.isEmpty()) {
-            switchExtensions =
-                    new ArrayList<>(switchExtList.stream().map(Object::toString).toList());
-        }
-
-        List<?> filenameSuffixList = getConfig().getList(FILENAME_SUFFIXES_KEY);
-        if (filenameSuffixList != null && !filenameSuffixList.isEmpty()) {
-            filenameSuffixes =
-                    new ArrayList<>(filenameSuffixList.stream().map(Object::toString).toList());
-        }
-
-        List<?> filenamePrefixList = getConfig().getList(FILENAME_PREFIXES_KEY);
-        if (filenamePrefixList != null && !filenamePrefixList.isEmpty()) {
-            filenamePrefixes =
-                    new ArrayList<>(filenamePrefixList.stream().map(Object::toString).toList());
-        }
-
-        List<?> directorySuffixList = getConfig().getList(DIRECTORY_SUFFIXES_KEY);
-        if (directorySuffixList != null && !directorySuffixList.isEmpty()) {
-            directorySuffixes =
-                    new ArrayList<>(directorySuffixList.stream().map(Object::toString).toList());
-        }
-
-        List<?> directoryPrefixList = getConfig().getList(DIRECTORY_PREFIXES_KEY);
-        if (directoryPrefixList != null && !directoryPrefixList.isEmpty()) {
-            directoryPrefixes =
-                    new ArrayList<>(directoryPrefixList.stream().map(Object::toString).toList());
-        }
-
-        List<?> customBackupExtList = getConfig().getList(GOF_BASE_KEY + ".customBackupExtensions");
-        if (customBackupExtList != null && !customBackupExtList.isEmpty()) {
-            customBackupExtensions =
-                    new ArrayList<>(customBackupExtList.stream().map(Object::toString).toList());
-        }
-
-        List<?> customFilenameSuffixList =
-                getConfig().getList(GOF_BASE_KEY + ".customFilenameSuffixes");
-        if (customFilenameSuffixList != null && !customFilenameSuffixList.isEmpty()) {
-            customFilenameSuffixes =
-                    new ArrayList<>(
-                            customFilenameSuffixList.stream().map(Object::toString).toList());
-        }
-
-        List<?> customDirectorySuffixList =
-                getConfig().getList(GOF_BASE_KEY + ".customDirectorySuffixes");
-        if (customDirectorySuffixList != null && !customDirectorySuffixList.isEmpty()) {
-            customDirectorySuffixes =
-                    new ArrayList<>(
-                            customDirectorySuffixList.stream().map(Object::toString).toList());
-        }
+        backupExtensions = loadList(BACKUP_EXTENSIONS_KEY, backupExtensions);
+        switchExtensions = loadList(SWITCH_EXTENSIONS_KEY, switchExtensions);
+        filenameSuffixes = loadList(FILENAME_SUFFIXES_KEY, filenameSuffixes);
+        filenamePrefixes = loadList(FILENAME_PREFIXES_KEY, filenamePrefixes);
+        directorySuffixes = loadList(DIRECTORY_SUFFIXES_KEY, directorySuffixes);
+        directoryPrefixes = loadList(DIRECTORY_PREFIXES_KEY, directoryPrefixes);
+        customBackupExtensions =
+                loadList(GOF_BASE_KEY + ".customBackupExtensions", customBackupExtensions);
+        customFilenameSuffixes =
+                loadList(GOF_BASE_KEY + ".customFilenameSuffixes", customFilenameSuffixes);
+        customDirectorySuffixes =
+                loadList(GOF_BASE_KEY + ".customDirectorySuffixes", customDirectorySuffixes);
 
         extensionAppendEnabled = getBoolean(EXTENSION_APPEND_ENABLED_KEY, extensionAppendEnabled);
         extensionReplaceEnabled =

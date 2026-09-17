@@ -45,19 +45,9 @@ public class DirectoryPrefixStrategy implements VariantStrategy {
 
         for (String prefix : config.getEffectiveDirectoryPrefixes()) {
             String newPath = "/" + prefix + parentPath + "/";
-            try {
-                URI candidateUri =
-                        new URI(
-                                parts.scheme(),
-                                null,
-                                parts.host(),
-                                parts.port(),
-                                newPath,
-                                null,
-                                null);
+            URI candidateUri = parts.toUri(newPath);
+            if (candidateUri != null) {
                 candidates.add(new FileNameCandidate(candidateUri, kind(), prefix));
-            } catch (Exception e) {
-                // Skip malformed URIs
             }
         }
 

@@ -79,6 +79,18 @@ public record PathParts(
                 fileExtension);
     }
 
+    /**
+     * Builds a URI on this path's scheme/host/port, or returns {@code null} if {@code path} is
+     * malformed.
+     */
+    public URI toUri(String path) {
+        try {
+            return new URI(scheme, null, host, port, path, null, null);
+        } catch (URIException e) {
+            return null;
+        }
+    }
+
     private static String extractParentDirName(String path) {
         if (path == null || path.isEmpty() || path.equals("/")) {
             return "";

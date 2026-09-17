@@ -40,19 +40,9 @@ public class FilenamePrefixStrategy implements VariantStrategy {
 
         for (String prefix : config.getEffectiveFilenamePrefixes()) {
             String newPath = parts.directoryPath() + prefix + parts.filename();
-            try {
-                URI candidateUri =
-                        new URI(
-                                parts.scheme(),
-                                null,
-                                parts.host(),
-                                parts.port(),
-                                newPath,
-                                null,
-                                null);
+            URI candidateUri = parts.toUri(newPath);
+            if (candidateUri != null) {
                 candidates.add(new FileNameCandidate(candidateUri, kind(), prefix));
-            } catch (Exception e) {
-                // Skip malformed URIs
             }
         }
 

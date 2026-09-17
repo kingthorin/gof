@@ -19,6 +19,7 @@ package com.kingthorin.zap.gof.strategy;
 
 import com.kingthorin.zap.gof.config.GofParam;
 import com.kingthorin.zap.gof.model.FileNameCandidate;
+import com.kingthorin.zap.gof.model.PathParts;
 import com.kingthorin.zap.gof.model.VariantKind;
 import java.util.List;
 
@@ -26,5 +27,5 @@ public interface VariantStrategy {
 
     VariantKind kind();
 
-    List<FileNameCandidate> generate(com.kingthorin.zap.gof.model.PathParts parts, GofParam config);
+    List<FileNameCandidate> generate(PathParts parts, GofParam config);
 }

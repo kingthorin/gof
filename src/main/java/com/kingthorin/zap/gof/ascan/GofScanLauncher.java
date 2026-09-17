@@ -51,7 +51,7 @@ public final class GofScanLauncher {
             ScanPolicy policy = new ScanPolicy();
             policy.getPluginFactory().setAllPluginEnabled(false);
 
-            Plugin gof = policy.getPluginFactory().getPlugin(60300);
+            Plugin gof = policy.getPluginFactory().getPlugin(GofActiveScanRule.PLUGIN_ID);
             if (gof == null) {
                 LOGGER.error("GofActiveScanRule plugin not found");
                 return -1;

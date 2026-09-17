@@ -44,19 +44,9 @@ public class ExtensionReplaceStrategy implements VariantStrategy {
                     parts.directoryPath()
                             + parts.baseName()
                             + (newExt.isEmpty() ? "" : "." + newExt);
-            try {
-                URI candidateUri =
-                        new URI(
-                                parts.scheme(),
-                                null,
-                                parts.host(),
-                                parts.port(),
-                                newPath,
-                                null,
-                                null);
+            URI candidateUri = parts.toUri(newPath);
+            if (candidateUri != null) {
                 candidates.add(new FileNameCandidate(candidateUri, kind(), ext));
-            } catch (Exception e) {
-                // Skip malformed URIs
             }
         }
 

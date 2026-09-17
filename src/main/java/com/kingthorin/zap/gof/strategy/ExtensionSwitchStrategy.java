@@ -41,19 +41,9 @@ public class ExtensionSwitchStrategy implements VariantStrategy {
         for (String switchExt : config.getEffectiveSwitchExtensions()) {
             if (!switchExt.equals(parts.extension())) {
                 String newPath = parts.directoryPath() + parts.baseName() + "." + switchExt;
-                try {
-                    URI candidateUri =
-                            new URI(
-                                    parts.scheme(),
-                                    null,
-                                    parts.host(),
-                                    parts.port(),
-                                    newPath,
-                                    null,
-                                    null);
+                URI candidateUri = parts.toUri(newPath);
+                if (candidateUri != null) {
                     candidates.add(new FileNameCandidate(candidateUri, kind(), switchExt));
-                } catch (Exception e) {
-                    // Skip malformed URIs
                 }
             }
         }

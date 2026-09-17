@@ -44,19 +44,9 @@ public class FilenameSuffixStrategy implements VariantStrategy {
                             + parts.baseName()
                             + suffix
                             + (parts.extension().isEmpty() ? "" : "." + parts.extension());
-            try {
-                URI candidateUri =
-                        new URI(
-                                parts.scheme(),
-                                null,
-                                parts.host(),
-                                parts.port(),
-                                newPath,
-                                null,
-                                null);
+            URI candidateUri = parts.toUri(newPath);
+            if (candidateUri != null) {
                 candidates.add(new FileNameCandidate(candidateUri, kind(), suffix));
-            } catch (Exception e) {
-                // Skip malformed URIs
             }
         }
 

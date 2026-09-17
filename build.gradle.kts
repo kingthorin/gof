@@ -63,8 +63,10 @@ spotless {
 
 dependencies {
     compileOnly("org.zaproxy.addon:commonlib:1.36.0")
+    testRuntimeOnly("org.zaproxy.addon:commonlib:1.36.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
     testImplementation("org.assertj:assertj-core:3.24.1")
+    testImplementation("org.mockito:mockito-core:5.23.0")
 }
 
 tasks.test {
