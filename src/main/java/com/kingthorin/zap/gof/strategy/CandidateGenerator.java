@@ -30,7 +30,14 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 
 public class CandidateGenerator {
 
-    private static final int[] STRENGTH_LIMITS = {6, 12, 20, Integer.MAX_VALUE};
+    private static int limitFor(AttackStrength strength) {
+        return switch (strength) {
+            case LOW -> 15;
+            case MEDIUM, DEFAULT -> 35;
+            case HIGH -> 75;
+            case INSANE -> Integer.MAX_VALUE;
+        };
+    }
 
     public List<FileNameCandidate> generate(URI baseUri, GofParam config, AttackStrength strength)
             throws URIException {
@@ -65,18 +72,29 @@ public class CandidateGenerator {
             strategies.add(new DirectoryPrefixStrategy());
         }
 
+        List<List<FileNameCandidate>> perStrategy = new ArrayList<>(strategies.size());
+        for (VariantStrategy strategy : strategies) {
+            perStrategy.add(strategy.generate(parts, config));
+        }
+
         Set<String> deduped = new LinkedHashSet<>();
         List<FileNameCandidate> result = new ArrayList<>();
-        int limit = STRENGTH_LIMITS[strength.ordinal()];
+        int limit = limitFor(strength);
+        int[] indices = new int[perStrategy.size()];
 
-        for (VariantStrategy strategy : strategies) {
-            for (FileNameCandidate candidate : strategy.generate(parts, config)) {
-                String key = candidate.uri().toString();
-                if (!deduped.contains(key)) {
-                    deduped.add(key);
-                    result.add(candidate);
-                    if (result.size() >= limit) {
-                        return result;
+        // Round-robin across strategies so the limit doesn't let early strategies (e.g.
+        // extension-based, which can produce dozens of candidates) starve out later ones
+        // (e.g. filename/directory prefixes) before they get a chance to contribute.
+        boolean progress = true;
+        while (progress && result.size() < limit) {
+            progress = false;
+            for (int i = 0; i < perStrategy.size() && result.size() < limit; i++) {
+                List<FileNameCandidate> candidates = perStrategy.get(i);
+                if (indices[i] < candidates.size()) {
+                    FileNameCandidate candidate = candidates.get(indices[i]++);
+                    progress = true;
+                    if (deduped.add(candidate.uri().toString())) {
+                        result.add(candidate);
                     }
                 }
             }

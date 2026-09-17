@@ -14,15 +14,23 @@
 		old versions, and editor temporary files by probing for common
 		filename variants at discovered paths. For example, if ZAP discovers
 		<CODE>index.php</CODE>
-		, GOF will probe for variants like:
+		, GOF will probe for variants using nine permutation strategies:
 	</P>
 	<UL>
 		<LI><CODE>index.php.bak</CODE>, <CODE>index.php.backup</CODE>
 			(extension append)</LI>
-		<LI><CODE>index.backup.php</CODE>, <CODE>index.old.php</CODE>
+		<LI><CODE>index.bak</CODE>, <CODE>index.backup</CODE> (extension
+			replace)</LI>
+		<LI><CODE>index.asp</CODE>, <CODE>index.aspx</CODE> (extension
+			switch)</LI>
+		<LI><CODE>index_old.php</CODE>, <CODE>index.old.php</CODE>
+			(extension combination)</LI>
+		<LI><CODE>index - Copy.php</CODE>, <CODE>index_old.php</CODE>
 			(filename suffix)</LI>
-		<LI><CODE>.index.php</CODE>, <CODE>_index.php</CODE> (filename
-			prefix)</LI>
+		<LI><CODE>Copy of index.php</CODE>, <CODE>old_index.php</CODE>
+			(filename prefix)</LI>
+		<LI><CODE>index0.php</CODE>, <CODE>index2.php</CODE> (digit
+			enumeration)</LI>
 		<LI>Directory variants like <CODE>/admin_old/</CODE>, <CODE>/backup/</CODE></LI>
 	</UL>
 
@@ -52,12 +60,33 @@
 
 	<H2>Configuration</H2>
 	<P>
-		Configure GOF under <STRONG>Tools → Options → Good Old Files</STRONG>:
+		Configure GOF defaults under <STRONG>Tools → Options → Good
+			Old Files</STRONG>:
 	</P>
 	<UL>
-		<LI>Disable/enable individual permutation strategies</LI>
+		<LI>Enable/disable each of the nine permutation strategies</LI>
 		<LI>Add custom filename patterns to default wordlists</LI>
-		<LI>Control case-insensitive matching</LI>
+		<LI>Set default attack strength for candidate generation</LI>
+	</UL>
+	<P>When invoking GOF via the context menu, a dialog allows choosing
+		the attack strength for that invocation only, without changing the
+		saved default. Strategy selection and custom wordlists always use the
+		values configured under Options; they cannot be overridden per
+		invocation, since the underlying active scan engine only propagates
+		attack strength to the running scan.</P>
+
+	<H2>Attack Strength</H2>
+	<P>Attack strength controls how many candidate files are generated
+		per discovered node:</P>
+	<UL>
+		<LI><STRONG>LOW</STRONG> (~15 candidates): Quick check with most
+			common file variants; suitable for large sites</LI>
+		<LI><STRONG>MEDIUM</STRONG> (~35 candidates): Balanced coverage;
+			all strategies get partial representation</LI>
+		<LI><STRONG>HIGH</STRONG> (~75 candidates): Thorough scan with
+			most wordlist entries</LI>
+		<LI><STRONG>INSANE</STRONG> (unlimited): Generate all possible
+			candidates from all enabled strategies</LI>
 	</UL>
 
 	<H2>Alert Levels</H2>

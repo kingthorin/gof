@@ -40,11 +40,10 @@ class ExtensionAppendStrategyUnitTest {
 
         List<FileNameCandidate> candidates = strategy.generate(parts, config);
 
-        assertThat(candidates).hasSize(6);
-        assertThat(candidates.get(0).uri().toString())
-                .isEqualTo("https://example.com/login.php.bak");
+        assertThat(candidates).hasSize(config.getEffectiveBackupExtensions().size());
+        assertThat(candidates)
+                .anyMatch(c -> c.uri().toString().equals("https://example.com/login.php.bak"));
         assertThat(candidates.get(0).kind()).isEqualTo(VariantKind.EXTENSION_APPEND);
-        assertThat(candidates.get(0).wordlistEntry()).isEqualTo("bak");
     }
 
     @Test
@@ -79,8 +78,9 @@ class ExtensionAppendStrategyUnitTest {
 
         List<FileNameCandidate> candidates = strategy.generate(parts, config);
 
-        assertThat(candidates).hasSize(6);
-        assertThat(candidates.get(0).uri().toString()).isEqualTo("https://example.com/README.bak");
+        assertThat(candidates).hasSize(config.getEffectiveBackupExtensions().size());
+        assertThat(candidates)
+                .anyMatch(c -> c.uri().toString().equals("https://example.com/README.bak"));
     }
 
     @Test

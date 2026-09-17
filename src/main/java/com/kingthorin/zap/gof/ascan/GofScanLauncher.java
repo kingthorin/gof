@@ -58,11 +58,10 @@ public final class GofScanLauncher {
             }
 
             gof.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
-            gof.setAttackStrength(Plugin.AttackStrength.MEDIUM);
+            String strength = (config != null) ? config.getAttackStrength() : "MEDIUM";
+            gof.setAttackStrength(Plugin.AttackStrength.valueOf(strength));
 
-            Object[] contextObjects =
-                    config != null ? new Object[] {policy, config} : new Object[] {policy};
-            return ascanExt.startScan(new Target(node, recurse), null, contextObjects);
+            return ascanExt.startScan(new Target(node, recurse), null, new Object[] {policy});
         } catch (Exception e) {
             LOGGER.error("Error launching GoF scan: {}", e.getMessage(), e);
             return -1;

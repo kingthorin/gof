@@ -15,20 +15,31 @@
  */
 package com.kingthorin.zap.gof.config;
 
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 
 public class GofOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
+
+    public static final AttackStrength[] SELECTABLE_STRENGTHS = {
+        AttackStrength.LOW, AttackStrength.MEDIUM, AttackStrength.HIGH, AttackStrength.INSANE
+    };
 
     private JCheckBox extensionAppendCheckbox;
     private JCheckBox extensionReplaceCheckbox;
@@ -39,6 +50,7 @@ public class GofOptionsPanel extends AbstractParamPanel {
     private JCheckBox digitEnumerationCheckbox;
     private JCheckBox directorySuffixCheckbox;
     private JCheckBox directoryPrefixCheckbox;
+    private JComboBox<String> attackStrengthCombo;
     private JTextArea customBackupExtensionsArea;
     private JTextArea customFilenameSuffixesArea;
     private JTextArea customDirectorySuffixesArea;
@@ -51,87 +63,84 @@ public class GofOptionsPanel extends AbstractParamPanel {
     }
 
     private void initUI() {
-        this.setLayout(new GridBagLayout());
+        JPanel content = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new java.awt.Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(5, 5, 5, 5);
 
-        this.add(new JLabel("Permutation Strategies:"), gbc);
+        content.add(new JLabel("Permutation Strategies:"), gbc);
         gbc.gridy++;
 
         extensionAppendCheckbox = new JCheckBox("Extension Append (file.php → file.php.bak)");
-        this.add(extensionAppendCheckbox, gbc);
+        content.add(extensionAppendCheckbox, gbc);
         gbc.gridy++;
 
         extensionReplaceCheckbox = new JCheckBox("Extension Replace (file.php → file.bak)");
-        this.add(extensionReplaceCheckbox, gbc);
+        content.add(extensionReplaceCheckbox, gbc);
         gbc.gridy++;
 
         extensionSwitchCheckbox = new JCheckBox("Extension Switch (file.php → file.asp)");
-        this.add(extensionSwitchCheckbox, gbc);
+        content.add(extensionSwitchCheckbox, gbc);
         gbc.gridy++;
 
         extensionCombinationCheckbox =
                 new JCheckBox("Extension Combination (file.php → file.php_old.php)");
-        this.add(extensionCombinationCheckbox, gbc);
+        content.add(extensionCombinationCheckbox, gbc);
         gbc.gridy++;
 
         filenameSuffixCheckbox = new JCheckBox("Filename Suffix (file.php → file.old.php)");
-        this.add(filenameSuffixCheckbox, gbc);
+        content.add(filenameSuffixCheckbox, gbc);
         gbc.gridy++;
 
         filenamePrefixCheckbox = new JCheckBox("Filename Prefix (file.php → .file.php)");
-        this.add(filenamePrefixCheckbox, gbc);
+        content.add(filenamePrefixCheckbox, gbc);
         gbc.gridy++;
 
         digitEnumerationCheckbox =
                 new JCheckBox("Digit Enumeration (file1.php → file2.php, file3.php, ...)");
-        this.add(digitEnumerationCheckbox, gbc);
+        content.add(digitEnumerationCheckbox, gbc);
         gbc.gridy++;
 
         directorySuffixCheckbox = new JCheckBox("Directory Suffix (/admin/ → /admin_old/)");
-        this.add(directorySuffixCheckbox, gbc);
+        content.add(directorySuffixCheckbox, gbc);
         gbc.gridy++;
 
         directoryPrefixCheckbox = new JCheckBox("Directory Prefix (/admin/ → /_admin/)");
-        this.add(directoryPrefixCheckbox, gbc);
+        content.add(directoryPrefixCheckbox, gbc);
         gbc.gridy++;
 
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        this.add(new JLabel("Custom Backup Extensions (one per line):"), gbc);
+        content.add(new JLabel(Constant.messages.getString("ascan.options.strength.label")), gbc);
         gbc.gridy++;
-        gbc.weighty = 0.3;
-        gbc.fill = GridBagConstraints.BOTH;
-        customBackupExtensionsArea = new JTextArea(3, 40);
+        attackStrengthCombo = new JComboBox<>(attackStrengthLabels());
+        content.add(attackStrengthCombo, gbc);
+        gbc.gridy++;
+
+        content.add(new JLabel("Custom Backup Extensions (one per line):"), gbc);
+        gbc.gridy++;
+        customBackupExtensionsArea = new JTextArea(5, 40);
         customBackupExtensionsArea.setLineWrap(true);
-        this.add(new JScrollPane(customBackupExtensionsArea), gbc);
+        content.add(new JScrollPane(customBackupExtensionsArea), gbc);
+        gbc.gridy++;
 
+        content.add(new JLabel("Custom Filename Suffixes (one per line):"), gbc);
         gbc.gridy++;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        this.add(new JLabel("Custom Filename Suffixes (one per line):"), gbc);
-        gbc.gridy++;
-        gbc.weighty = 0.3;
-        gbc.fill = GridBagConstraints.BOTH;
-        customFilenameSuffixesArea = new JTextArea(3, 40);
+        customFilenameSuffixesArea = new JTextArea(5, 40);
         customFilenameSuffixesArea.setLineWrap(true);
-        this.add(new JScrollPane(customFilenameSuffixesArea), gbc);
+        content.add(new JScrollPane(customFilenameSuffixesArea), gbc);
+        gbc.gridy++;
 
+        content.add(new JLabel("Custom Directory Suffixes (one per line):"), gbc);
         gbc.gridy++;
-        gbc.weighty = 0.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        this.add(new JLabel("Custom Directory Suffixes (one per line):"), gbc);
-        gbc.gridy++;
-        gbc.weighty = 0.4;
-        gbc.fill = GridBagConstraints.BOTH;
-        customDirectorySuffixesArea = new JTextArea(3, 40);
+        customDirectorySuffixesArea = new JTextArea(5, 40);
         customDirectorySuffixesArea.setLineWrap(true);
-        this.add(new JScrollPane(customDirectorySuffixesArea), gbc);
+        content.add(new JScrollPane(customDirectorySuffixesArea), gbc);
+
+        this.setLayout(new BorderLayout());
+        this.add(new JScrollPane(content), BorderLayout.CENTER);
     }
 
     @Override
@@ -147,6 +156,8 @@ public class GofOptionsPanel extends AbstractParamPanel {
         digitEnumerationCheckbox.setSelected(param.isDigitEnumerationEnabled());
         directorySuffixCheckbox.setSelected(param.isDirectorySuffixEnabled());
         directoryPrefixCheckbox.setSelected(param.isDirectoryPrefixEnabled());
+        attackStrengthCombo.setSelectedItem(
+                attackStrengthLabel(AttackStrength.valueOf(param.getAttackStrength())));
         customBackupExtensionsArea.setText(String.join("\n", param.getCustomBackupExtensions()));
         customFilenameSuffixesArea.setText(String.join("\n", param.getCustomFilenameSuffixes()));
         customDirectorySuffixesArea.setText(String.join("\n", param.getCustomDirectorySuffixes()));
@@ -165,9 +176,24 @@ public class GofOptionsPanel extends AbstractParamPanel {
         param.setDigitEnumerationEnabled(digitEnumerationCheckbox.isSelected());
         param.setDirectorySuffixEnabled(directorySuffixCheckbox.isSelected());
         param.setDirectoryPrefixEnabled(directoryPrefixCheckbox.isSelected());
+        param.setAttackStrength(
+                SELECTABLE_STRENGTHS[attackStrengthCombo.getSelectedIndex()].name());
         param.setCustomBackupExtensions(parseTextArea(customBackupExtensionsArea));
         param.setCustomFilenameSuffixes(parseTextArea(customFilenameSuffixesArea));
         param.setCustomDirectorySuffixes(parseTextArea(customDirectorySuffixesArea));
+    }
+
+    public static String attackStrengthLabel(AttackStrength strength) {
+        return Constant.messages.getString(
+                "ascan.options.strength." + strength.name().toLowerCase(Locale.ROOT));
+    }
+
+    public static String[] attackStrengthLabels() {
+        String[] labels = new String[SELECTABLE_STRENGTHS.length];
+        for (int i = 0; i < SELECTABLE_STRENGTHS.length; i++) {
+            labels[i] = attackStrengthLabel(SELECTABLE_STRENGTHS[i]);
+        }
+        return labels;
     }
 
     private List<String> parseTextArea(JTextArea area) {

@@ -17,10 +17,42 @@
  */
 package com.kingthorin.zap.gof.config;
 
+import java.util.ArrayList;
 import java.util.List;
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 
-public class GofParam extends AbstractParam {
+public class GofParam extends VersionedAbstractParam {
+
+    private static final int CURRENT_CONFIG_VERSION = 1;
+    private static final String GOF_BASE_KEY = "gof";
+    private static final String CONFIG_VERSION_KEY = GOF_BASE_KEY + VERSION_ATTRIBUTE;
+
+    private static final String BACKUP_EXTENSIONS_KEY = GOF_BASE_KEY + ".backupExtensions";
+    private static final String SWITCH_EXTENSIONS_KEY = GOF_BASE_KEY + ".switchExtensions";
+    private static final String FILENAME_SUFFIXES_KEY = GOF_BASE_KEY + ".filenameSuffixes";
+    private static final String FILENAME_PREFIXES_KEY = GOF_BASE_KEY + ".filenamePrefixes";
+    private static final String DIRECTORY_SUFFIXES_KEY = GOF_BASE_KEY + ".directorySuffixes";
+    private static final String DIRECTORY_PREFIXES_KEY = GOF_BASE_KEY + ".directoryPrefixes";
+
+    private static final String EXTENSION_APPEND_ENABLED_KEY =
+            GOF_BASE_KEY + ".extensionAppendEnabled";
+    private static final String EXTENSION_REPLACE_ENABLED_KEY =
+            GOF_BASE_KEY + ".extensionReplaceEnabled";
+    private static final String EXTENSION_SWITCH_ENABLED_KEY =
+            GOF_BASE_KEY + ".extensionSwitchEnabled";
+    private static final String EXTENSION_COMBINATION_ENABLED_KEY =
+            GOF_BASE_KEY + ".extensionCombinationEnabled";
+    private static final String FILENAME_SUFFIX_ENABLED_KEY =
+            GOF_BASE_KEY + ".filenameSuffixEnabled";
+    private static final String FILENAME_PREFIX_ENABLED_KEY =
+            GOF_BASE_KEY + ".filenamePrefixEnabled";
+    private static final String DIGIT_ENUMERATION_ENABLED_KEY =
+            GOF_BASE_KEY + ".digitEnumerationEnabled";
+    private static final String DIRECTORY_SUFFIX_ENABLED_KEY =
+            GOF_BASE_KEY + ".directorySuffixEnabled";
+    private static final String DIRECTORY_PREFIX_ENABLED_KEY =
+            GOF_BASE_KEY + ".directoryPrefixEnabled";
+    private static final String ATTACK_STRENGTH_KEY = GOF_BASE_KEY + ".attackStrength";
 
     private List<String> backupExtensions =
             List.of(
@@ -45,11 +77,100 @@ public class GofParam extends AbstractParam {
     private boolean digitEnumerationEnabled = true;
     private boolean directorySuffixEnabled = true;
     private boolean directoryPrefixEnabled = true;
+    private String attackStrength = "MEDIUM";
 
     public GofParam() {}
 
     @Override
-    protected void parse() {}
+    protected void parseImpl() {
+        List<?> backupExtList = getConfig().getList(BACKUP_EXTENSIONS_KEY);
+        if (backupExtList != null && !backupExtList.isEmpty()) {
+            backupExtensions =
+                    new ArrayList<>(backupExtList.stream().map(Object::toString).toList());
+        }
+
+        List<?> switchExtList = getConfig().getList(SWITCH_EXTENSIONS_KEY);
+        if (switchExtList != null && !switchExtList.isEmpty()) {
+            switchExtensions =
+                    new ArrayList<>(switchExtList.stream().map(Object::toString).toList());
+        }
+
+        List<?> filenameSuffixList = getConfig().getList(FILENAME_SUFFIXES_KEY);
+        if (filenameSuffixList != null && !filenameSuffixList.isEmpty()) {
+            filenameSuffixes =
+                    new ArrayList<>(filenameSuffixList.stream().map(Object::toString).toList());
+        }
+
+        List<?> filenamePrefixList = getConfig().getList(FILENAME_PREFIXES_KEY);
+        if (filenamePrefixList != null && !filenamePrefixList.isEmpty()) {
+            filenamePrefixes =
+                    new ArrayList<>(filenamePrefixList.stream().map(Object::toString).toList());
+        }
+
+        List<?> directorySuffixList = getConfig().getList(DIRECTORY_SUFFIXES_KEY);
+        if (directorySuffixList != null && !directorySuffixList.isEmpty()) {
+            directorySuffixes =
+                    new ArrayList<>(directorySuffixList.stream().map(Object::toString).toList());
+        }
+
+        List<?> directoryPrefixList = getConfig().getList(DIRECTORY_PREFIXES_KEY);
+        if (directoryPrefixList != null && !directoryPrefixList.isEmpty()) {
+            directoryPrefixes =
+                    new ArrayList<>(directoryPrefixList.stream().map(Object::toString).toList());
+        }
+
+        List<?> customBackupExtList = getConfig().getList(GOF_BASE_KEY + ".customBackupExtensions");
+        if (customBackupExtList != null && !customBackupExtList.isEmpty()) {
+            customBackupExtensions =
+                    new ArrayList<>(customBackupExtList.stream().map(Object::toString).toList());
+        }
+
+        List<?> customFilenameSuffixList =
+                getConfig().getList(GOF_BASE_KEY + ".customFilenameSuffixes");
+        if (customFilenameSuffixList != null && !customFilenameSuffixList.isEmpty()) {
+            customFilenameSuffixes =
+                    new ArrayList<>(
+                            customFilenameSuffixList.stream().map(Object::toString).toList());
+        }
+
+        List<?> customDirectorySuffixList =
+                getConfig().getList(GOF_BASE_KEY + ".customDirectorySuffixes");
+        if (customDirectorySuffixList != null && !customDirectorySuffixList.isEmpty()) {
+            customDirectorySuffixes =
+                    new ArrayList<>(
+                            customDirectorySuffixList.stream().map(Object::toString).toList());
+        }
+
+        extensionAppendEnabled = getBoolean(EXTENSION_APPEND_ENABLED_KEY, extensionAppendEnabled);
+        extensionReplaceEnabled =
+                getBoolean(EXTENSION_REPLACE_ENABLED_KEY, extensionReplaceEnabled);
+        extensionSwitchEnabled = getBoolean(EXTENSION_SWITCH_ENABLED_KEY, extensionSwitchEnabled);
+        extensionCombinationEnabled =
+                getBoolean(EXTENSION_COMBINATION_ENABLED_KEY, extensionCombinationEnabled);
+        filenameSuffixEnabled = getBoolean(FILENAME_SUFFIX_ENABLED_KEY, filenameSuffixEnabled);
+        filenamePrefixEnabled = getBoolean(FILENAME_PREFIX_ENABLED_KEY, filenamePrefixEnabled);
+        digitEnumerationEnabled =
+                getBoolean(DIGIT_ENUMERATION_ENABLED_KEY, digitEnumerationEnabled);
+        directorySuffixEnabled = getBoolean(DIRECTORY_SUFFIX_ENABLED_KEY, directorySuffixEnabled);
+        directoryPrefixEnabled = getBoolean(DIRECTORY_PREFIX_ENABLED_KEY, directoryPrefixEnabled);
+
+        attackStrength = getString(ATTACK_STRENGTH_KEY, "MEDIUM");
+    }
+
+    @Override
+    protected String getConfigVersionKey() {
+        return CONFIG_VERSION_KEY;
+    }
+
+    @Override
+    protected int getCurrentVersion() {
+        return CURRENT_CONFIG_VERSION;
+    }
+
+    @Override
+    protected void updateConfigsImpl(int fileVersion) {
+        // No migrations for v1
+    }
 
     public List<String> getEffectiveBackupExtensions() {
         return backupExtensions;
@@ -57,6 +178,7 @@ public class GofParam extends AbstractParam {
 
     public void setBackupExtensions(List<String> extensions) {
         this.backupExtensions = extensions;
+        getConfig().setProperty(BACKUP_EXTENSIONS_KEY, extensions);
     }
 
     public List<String> getEffectiveSwitchExtensions() {
@@ -65,6 +187,7 @@ public class GofParam extends AbstractParam {
 
     public void setSwitchExtensions(List<String> extensions) {
         this.switchExtensions = extensions;
+        getConfig().setProperty(SWITCH_EXTENSIONS_KEY, extensions);
     }
 
     public List<String> getEffectiveFilenameSuffixes() {
@@ -73,6 +196,7 @@ public class GofParam extends AbstractParam {
 
     public void setFilenameSuffixes(List<String> suffixes) {
         this.filenameSuffixes = suffixes;
+        getConfig().setProperty(FILENAME_SUFFIXES_KEY, suffixes);
     }
 
     public List<String> getEffectiveFilenamePrefixes() {
@@ -81,6 +205,7 @@ public class GofParam extends AbstractParam {
 
     public void setFilenamePrefixes(List<String> prefixes) {
         this.filenamePrefixes = prefixes;
+        getConfig().setProperty(FILENAME_PREFIXES_KEY, prefixes);
     }
 
     public List<String> getEffectiveDirectorySuffixes() {
@@ -89,6 +214,7 @@ public class GofParam extends AbstractParam {
 
     public void setDirectorySuffixes(List<String> suffixes) {
         this.directorySuffixes = suffixes;
+        getConfig().setProperty(DIRECTORY_SUFFIXES_KEY, suffixes);
     }
 
     public List<String> getEffectiveDirectoryPrefixes() {
@@ -97,6 +223,7 @@ public class GofParam extends AbstractParam {
 
     public void setDirectoryPrefixes(List<String> prefixes) {
         this.directoryPrefixes = prefixes;
+        getConfig().setProperty(DIRECTORY_PREFIXES_KEY, prefixes);
     }
 
     public List<String> getCustomBackupExtensions() {
@@ -105,6 +232,7 @@ public class GofParam extends AbstractParam {
 
     public void setCustomBackupExtensions(List<String> extensions) {
         this.customBackupExtensions = extensions;
+        getConfig().setProperty(GOF_BASE_KEY + ".customBackupExtensions", extensions);
     }
 
     public List<String> getCustomFilenameSuffixes() {
@@ -113,6 +241,7 @@ public class GofParam extends AbstractParam {
 
     public void setCustomFilenameSuffixes(List<String> suffixes) {
         this.customFilenameSuffixes = suffixes;
+        getConfig().setProperty(GOF_BASE_KEY + ".customFilenameSuffixes", suffixes);
     }
 
     public List<String> getCustomDirectorySuffixes() {
@@ -121,6 +250,7 @@ public class GofParam extends AbstractParam {
 
     public void setCustomDirectorySuffixes(List<String> suffixes) {
         this.customDirectorySuffixes = suffixes;
+        getConfig().setProperty(GOF_BASE_KEY + ".customDirectorySuffixes", suffixes);
     }
 
     public boolean isExtensionAppendEnabled() {
@@ -129,6 +259,7 @@ public class GofParam extends AbstractParam {
 
     public void setExtensionAppendEnabled(boolean enabled) {
         this.extensionAppendEnabled = enabled;
+        getConfig().setProperty(EXTENSION_APPEND_ENABLED_KEY, enabled);
     }
 
     public boolean isExtensionReplaceEnabled() {
@@ -137,6 +268,7 @@ public class GofParam extends AbstractParam {
 
     public void setExtensionReplaceEnabled(boolean enabled) {
         this.extensionReplaceEnabled = enabled;
+        getConfig().setProperty(EXTENSION_REPLACE_ENABLED_KEY, enabled);
     }
 
     public boolean isExtensionSwitchEnabled() {
@@ -145,6 +277,7 @@ public class GofParam extends AbstractParam {
 
     public void setExtensionSwitchEnabled(boolean enabled) {
         this.extensionSwitchEnabled = enabled;
+        getConfig().setProperty(EXTENSION_SWITCH_ENABLED_KEY, enabled);
     }
 
     public boolean isExtensionCombinationEnabled() {
@@ -153,6 +286,7 @@ public class GofParam extends AbstractParam {
 
     public void setExtensionCombinationEnabled(boolean enabled) {
         this.extensionCombinationEnabled = enabled;
+        getConfig().setProperty(EXTENSION_COMBINATION_ENABLED_KEY, enabled);
     }
 
     public boolean isFilenameSuffixEnabled() {
@@ -161,6 +295,7 @@ public class GofParam extends AbstractParam {
 
     public void setFilenameSuffixEnabled(boolean enabled) {
         this.filenameSuffixEnabled = enabled;
+        getConfig().setProperty(FILENAME_SUFFIX_ENABLED_KEY, enabled);
     }
 
     public boolean isFilenamePrefixEnabled() {
@@ -169,6 +304,7 @@ public class GofParam extends AbstractParam {
 
     public void setFilenamePrefixEnabled(boolean enabled) {
         this.filenamePrefixEnabled = enabled;
+        getConfig().setProperty(FILENAME_PREFIX_ENABLED_KEY, enabled);
     }
 
     public boolean isDigitEnumerationEnabled() {
@@ -177,6 +313,7 @@ public class GofParam extends AbstractParam {
 
     public void setDigitEnumerationEnabled(boolean enabled) {
         this.digitEnumerationEnabled = enabled;
+        getConfig().setProperty(DIGIT_ENUMERATION_ENABLED_KEY, enabled);
     }
 
     public boolean isDirectorySuffixEnabled() {
@@ -185,6 +322,7 @@ public class GofParam extends AbstractParam {
 
     public void setDirectorySuffixEnabled(boolean enabled) {
         this.directorySuffixEnabled = enabled;
+        getConfig().setProperty(DIRECTORY_SUFFIX_ENABLED_KEY, enabled);
     }
 
     public boolean isDirectoryPrefixEnabled() {
@@ -193,5 +331,15 @@ public class GofParam extends AbstractParam {
 
     public void setDirectoryPrefixEnabled(boolean enabled) {
         this.directoryPrefixEnabled = enabled;
+        getConfig().setProperty(DIRECTORY_PREFIX_ENABLED_KEY, enabled);
+    }
+
+    public String getAttackStrength() {
+        return attackStrength;
+    }
+
+    public void setAttackStrength(String strength) {
+        this.attackStrength = strength;
+        getConfig().setProperty(ATTACK_STRENGTH_KEY, strength);
     }
 }

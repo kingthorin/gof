@@ -60,7 +60,7 @@ public record PathParts(
                     int dotIndex = filename.lastIndexOf('.');
                     if (dotIndex > 0) {
                         baseName = filename.substring(0, dotIndex);
-                        fileExtension = filename.substring(dotIndex);
+                        fileExtension = filename.substring(dotIndex + 1);
                     } else {
                         baseName = filename;
                     }

@@ -28,50 +28,37 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("deprecation")
-class ExtensionCombinationStrategyUnitTest {
+class ExtensionSwitchStrategyUnitTest {
 
     @Test
-    void testExtensionCombinationWithUnderscoreSeparator() throws Exception {
-        ExtensionCombinationStrategy strategy = new ExtensionCombinationStrategy();
+    void testSwitchesToOtherExtensions() throws Exception {
+        ExtensionSwitchStrategy strategy = new ExtensionSwitchStrategy();
         PathParts parts = PathParts.from(new URI("https://example.com/login.php"));
         GofParam config = new GofParam();
 
         List<FileNameCandidate> candidates = strategy.generate(parts, config);
 
         assertThat(candidates)
-                .filteredOn(c -> c.uri().toString().contains("login_bak.php"))
-                .hasSize(1);
+                .anyMatch(c -> c.uri().toString().equals("https://example.com/login.asp"));
+        assertThat(candidates).allMatch(c -> c.kind() == VariantKind.EXTENSION_SWITCH);
     }
 
     @Test
-    void testExtensionCombinationWithDotSeparator() throws Exception {
-        ExtensionCombinationStrategy strategy = new ExtensionCombinationStrategy();
+    void testDoesNotSwitchToSameExtension() throws Exception {
+        ExtensionSwitchStrategy strategy = new ExtensionSwitchStrategy();
         PathParts parts = PathParts.from(new URI("https://example.com/login.php"));
         GofParam config = new GofParam();
 
         List<FileNameCandidate> candidates = strategy.generate(parts, config);
 
         assertThat(candidates)
-                .filteredOn(c -> c.uri().toString().contains("login.bak.php"))
-                .hasSize(1);
-    }
-
-    @Test
-    void testExtensionCombinationMultipleCandidates() throws Exception {
-        ExtensionCombinationStrategy strategy = new ExtensionCombinationStrategy();
-        PathParts parts = PathParts.from(new URI("https://example.com/login.php"));
-        GofParam config = new GofParam();
-
-        List<FileNameCandidate> candidates = strategy.generate(parts, config);
-
-        assertThat(candidates)
-                .hasSize(config.getEffectiveBackupExtensions().size() * 2)
-                .allMatch(c -> c.kind() == VariantKind.EXTENSION_COMBINATION);
+                .noneMatch(c -> c.uri().toString().equals("https://example.com/login.php"));
+        assertThat(candidates).hasSize(config.getEffectiveSwitchExtensions().size() - 1);
     }
 
     @Test
     void testEmptyFilenameNoOp() throws Exception {
-        ExtensionCombinationStrategy strategy = new ExtensionCombinationStrategy();
+        ExtensionSwitchStrategy strategy = new ExtensionSwitchStrategy();
         PathParts parts = PathParts.from(new URI("https://example.com/admin/"));
         GofParam config = new GofParam();
 
@@ -82,7 +69,7 @@ class ExtensionCombinationStrategyUnitTest {
 
     @Test
     void testFileWithoutExtensionNoOp() throws Exception {
-        ExtensionCombinationStrategy strategy = new ExtensionCombinationStrategy();
+        ExtensionSwitchStrategy strategy = new ExtensionSwitchStrategy();
         PathParts parts = PathParts.from(new URI("https://example.com/README"));
         GofParam config = new GofParam();
 
@@ -93,8 +80,8 @@ class ExtensionCombinationStrategyUnitTest {
 
     @Test
     void testStrategyKind() {
-        ExtensionCombinationStrategy strategy = new ExtensionCombinationStrategy();
+        ExtensionSwitchStrategy strategy = new ExtensionSwitchStrategy();
 
-        assertThat(strategy.kind()).isEqualTo(VariantKind.EXTENSION_COMBINATION);
+        assertThat(strategy.kind()).isEqualTo(VariantKind.EXTENSION_SWITCH);
     }
 }

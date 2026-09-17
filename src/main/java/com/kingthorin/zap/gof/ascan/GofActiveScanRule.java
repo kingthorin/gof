@@ -32,6 +32,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -114,7 +115,10 @@ public class GofActiveScanRule extends AbstractAppPlugin {
         }
 
         try {
-            GofParam config = new GofParam();
+            GofParam config = Model.getSingleton().getOptionsParam().getParamSet(GofParam.class);
+            if (config == null) {
+                config = new GofParam();
+            }
             CandidateGenerator generator = new CandidateGenerator();
             List<FileNameCandidate> candidates =
                     generator.generate(
